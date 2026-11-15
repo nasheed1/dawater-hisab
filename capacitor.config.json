@@ -1,0 +1,6 @@
+{
+  "appId": "com.nasheed.dawaterhisab",
+  "appName": "দাওয়াতের হিসাব",
+  "webDir": "www",
+  "server": { "androidScheme": "https" }
+}
