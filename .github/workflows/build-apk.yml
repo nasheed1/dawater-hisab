@@ -1,0 +1,59 @@
+name: Build Android APK
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apk:
+    name: Build APK
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Prepare www (the tool is the single index.html at the repo root)
+        run: mkdir -p www && cp index.html www/index.html
+
+      - name: Create the Android project (android/ is generated, not committed)
+        run: npx cap add android
+
+      - name: Generate launcher icons
+        run: npx capacitor-assets generate --android
+
+      - name: Sync web files into Android
+        run: npx cap sync android
+
+      - name: Build APK (debug)
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+          cp app/build/outputs/apk/debug/app-debug.apk "$GITHUB_WORKSPACE/DawaterHisab.apk"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: DawaterHisab-apk
+          path: DawaterHisab.apk
+          if-no-files-found: error
+
+      - name: Attach APK to the GitHub Release (tags only)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: DawaterHisab.apk
