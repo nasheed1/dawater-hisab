@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>দাওয়াতের হিসাব — Nasheed Library</title>
+<style>
+  :root{
+    --cream:#f7f2e7; --paper:#fffdf6; --ink:#38352f; --brick:#9e3a2e; --brick2:#7c2c22;
+    --sand:#efe6d2; --line:#e2d7bf; --gold:#c98a2d; --ok:#2e7d4f;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:var(--cream);color:var(--ink);
+    font-family:'Hind Siliguri','Noto Sans Bengali',system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased}
+  header{background:linear-gradient(135deg,var(--brick),var(--brick2));color:#fdf6e3;
+    padding:26px 18px 22px;text-align:center}
+  header h1{margin:0;font-size:clamp(28px,6vw,44px);font-weight:800;letter-spacing:.3px}
+  header p{margin:6px 0 0;font-size:clamp(14px,3.4vw,17px);opacity:.92}
+  .wrap{max-width:1120px;margin:0 auto;padding:18px 14px 30px}
+  .grid{display:grid;grid-template-columns:1fr;gap:18px}
+  @media(min-width:900px){ .grid{grid-template-columns:430px 1fr;align-items:start} }
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:18px;
+    padding:20px;box-shadow:0 4px 18px rgba(90,60,20,.07)}
+  .card h2{margin:0 0 14px;font-size:20px;color:var(--brick2)}
+  label.lbl{display:block;font-weight:700;margin:16px 0 8px;font-size:16px}
+  label.lbl:first-of-type{margin-top:0}
+  .guests{display:flex;align-items:center;gap:10px}
+  .guests input{flex:1;font-size:26px;font-weight:800;text-align:center;padding:12px;
+    border:2px solid var(--line);border-radius:14px;background:#fff;color:var(--ink);
+    font-family:inherit;min-width:0}
+  .guests input:focus{outline:none;border-color:var(--brick)}
+  .guests span{font-size:17px;font-weight:700;white-space:nowrap}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .chip{border:1.5px solid var(--line);background:var(--sand);border-radius:999px;
+    padding:7px 14px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;color:var(--ink)}
+  .chip.on{background:var(--brick);color:#fff;border-color:var(--brick)}
+  .menus{display:grid;gap:10px}
+  .menu{display:flex;gap:12px;align-items:flex-start;border:2px solid var(--line);
+    border-radius:14px;padding:13px 14px;cursor:pointer;background:#fff;transition:.15s}
+  .menu input{margin-top:4px;accent-color:var(--brick);width:19px;height:19px;flex:none}
+  .menu b{font-size:17px;display:block}
+  .menu small{color:#7a7261;font-size:13.5px;line-height:1.35;display:block;margin-top:2px}
+  .menu.sel{border-color:var(--brick);background:#fdf3ec}
+  .opts{display:grid;gap:9px}
+  .opt{display:flex;align-items:center;gap:10px;font-size:16px;font-weight:600;cursor:pointer;
+    background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px}
+  .opt input{width:19px;height:19px;accent-color:var(--brick)}
+  .go{margin-top:20px;width:100%;background:var(--brick);color:#fff;border:none;cursor:pointer;
+    font-family:inherit;font-size:19px;font-weight:800;padding:15px;border-radius:14px}
+  .go:active{transform:scale(.99)}
+  .meta{font-size:15px;color:#7a7261;margin-bottom:12px;line-height:1.5}
+  .meta b{color:var(--ink)}
+  table{width:100%;border-collapse:collapse}
+  td,th{padding:10px 8px;border-bottom:1px dashed var(--line);font-size:16.5px;text-align:left}
+  td.q{text-align:right;font-weight:800;white-space:nowrap;color:var(--brick2);font-size:17.5px}
+  tr:last-child td{border-bottom:none}
+  .cat{font-weight:800;color:var(--gold);font-size:14px;letter-spacing:.4px;padding-top:16px;border-bottom:none}
+  .actions{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+  .btn{flex:1;border-radius:12px;padding:13px;font-family:inherit;font-size:16.5px;font-weight:800;
+    cursor:pointer;border:2px solid var(--brick);background:var(--brick);color:#fff;min-width:150px}
+  .btn.ghost{background:#fff;color:var(--brick)}
+  .note{margin-top:14px;font-size:13.5px;color:#8a8172;line-height:1.55}
+  footer{text-align:center;color:#8a8172;font-size:13.5px;padding:0 16px 26px}
+  footer b{color:var(--brick2)}
+  @media(max-width:480px){ td,th{font-size:15.5px} td.q{font-size:16.5px} }
+</style>
+</head>
+<body>
+<header>
+  <h1>দাওয়াতের হিসাব</h1>
+  <p>বিয়ে · ওয়ালিমা · আকিকা · মিলাদ — অতিথি অনুযায়ী বাজারের পুরো তালিকা</p>
+</header>
+
+<div class="wrap">
+  <div class="grid">
+
+    <!-- ===== ইনপুট ===== -->
+    <section class="card">
+      <h2>আপনার দাওয়াত</h2>
+
+      <label class="lbl" for="guests">অতিথি কতজন?</label>
+      <div class="guests">
+        <input id="guests" type="number" inputmode="numeric" min="10" max="10000" value="100">
+        <span>জন</span>
+      </div>
+      <div class="chips" id="chips">
+        <button class="chip" data-n="50">৫০</button>
+        <button class="chip on" data-n="100">১০০</button>
+        <button class="chip" data-n="200">২০০</button>
+        <button class="chip" data-n="300">৩০০</button>
+        <button class="chip" data-n="500">৫০০</button>
+        <button class="chip" data-n="1000">১০০০</button>
+      </div>
+
+      <label class="lbl">মেনু বেছে নিন</label>
+      <div class="menus" id="menus">
+        <label class="menu sel">
+          <input type="radio" name="menu" value="kacchi" checked>
+          <span><b>খাসির কাচ্চি বিরিয়ানি</b>
+          <small>কাচ্চি + বোরহানি — বিয়ের সবচেয়ে চলতি মেনু</small></span>
+        </label>
+        <label class="menu">
+          <input type="radio" name="menu" value="polao">
+          <span><b>পোলাও + মুরগির রোস্ট</b>
+          <small>চিনিগুঁড়া পোলাও, সোনালী মুরগির রোস্ট, সালাদ</small></span>
+        </label>
+        <label class="menu">
+          <input type="radio" name="menu" value="tehari">
+          <span><b>গরুর তেহারি</b>
+          <small>সরিষার তেলের ঝাঁঝালো তেহারি, সালাদসহ</small></span>
+        </label>
+      </div>
+
+      <label class="lbl">সাথে আর যা যা থাকবে</label>
+      <div class="opts">
+        <label class="opt"><input type="checkbox" id="optBorhani" checked> বোরহানি</label>
+        <label class="opt"><input type="checkbox" id="optSalad" checked> সালাদ</label>
+        <label class="opt"><input type="checkbox" id="optMisti" checked> মিষ্টি (২ পিস করে)</label>
+        <label class="opt"><input type="checkbox" id="optBuffer" checked> ১০% বাড়তি ধরে হিসাব (নিরাপত্তার জন্য)</label>
+      </div>
+
+      <button class="go" id="goBtn">হিসাব দেখুন</button>
+    </section>
+
+    <!-- ===== ফলাফল ===== -->
+    <section class="card" id="resultCard">
+      <h2>বাজারের তালিকা</h2>
+      <div class="meta" id="meta"></div>
+      <table id="list"></table>
+      <div class="actions">
+        <button class="btn" id="copyBtn">তালিকা কপি করুন</button>
+        <button class="btn ghost" id="topBtn">আবার হিসাব করুন</button>
+      </div>
+      <p class="note">পরিমাণগুলো অভিজ্ঞ বাবুর্চিদের প্রচলিত হিসাব অনুযায়ী (যেমন: ১ কেজি খাসির গোশতে কাচ্চি ৫ জন, ১ কেজি চালে বিরিয়ানি ৬–৭ জন)। অতিথিদের খাওয়ার ধরন অনুযায়ী কম-বেশি হতে পারে — কেনার আগে বাবুর্চির সঙ্গে একবার মিলিয়ে নিন।</p>
+    </section>
+
+  </div>
+</div>
+
+<footer>একটি <b>Nasheed Library</b> টুল · ইন্টারনেট ছাড়াই চলে</footer>
+
+<script>
+"use strict";
+const BN = s => String(s).replace(/[0-9]/g, d => "০১২৩৪৫৬৭৮৯"[d]);
+
+/* প্রতি জনের জন্য কাঁচামাল: [নাম, পরিমাণ, একক]  একক: g=গ্রাম, ml=মিলি, pc=পিস, ta=টা */
+const MENUS = {
+  kacchi: { name: "খাসির কাচ্চি বিরিয়ানি", groups: [
+    ["মূল উপকরণ", [
+      ["খাসির গোশত", 200, "g"], ["বাসমতী / চিনিগুঁড়া চাল", 150, "g"],
+      ["আলু (বড়, অর্ধেক করে)", 1, "pc"], ["পেঁয়াজ (বেরেস্তাসহ)", 45, "g"],
+      ["টক দই", 35, "g"], ["আদা-রসুন বাটা", 12, "g"] ]],
+    ["তেল-মসলা", [
+      ["রান্নার তেল", 25, "ml"], ["ঘি", 15, "ml"],
+      ["কাচ্চি / বিরিয়ানি মসলা", 6, "g"], ["লবণ", 6, "g"], ["চিনি", 6, "g"],
+      ["কিসমিস ও বাদাম", 10, "g"], ["তরল দুধ", 10, "ml"], ["লেবু", 0.25, "ta"] ]]
+  ]},
+  polao: { name: "পোলাও + মুরগির রোস্ট", groups: [
+    ["মূল উপকরণ", [
+      ["চিনিগুঁড়া চাল (পোলাও)", 120, "g"], ["মুরগি, সোনালী (রোস্টের জন্য)", 0.25, "ta"],
+      ["পেঁয়াজ", 40, "g"], ["টক দই", 25, "g"], ["আদা-রসুন বাটা", 10, "g"],
+      ["কাঁচা মরিচ", 2, "pc"] ]],
+    ["তেল-মসলা", [
+      ["রান্নার তেল", 35, "ml"], ["ঘি", 20, "ml"],
+      ["রোস্টের মসলা (গরম মসলা, জিরা, ধনিয়া)", 6, "g"],
+      ["লবণ", 6, "g"], ["চিনি", 5, "g"] ]]
+  ]},
+  tehari: { name: "গরুর তেহারি", groups: [
+    ["মূল উপকরণ", [
+      ["গরুর গোশত", 160, "g"], ["পোলাওর চাল", 150, "g"],
+      ["পেঁয়াজ", 45, "g"], ["টক দই", 15, "g"], ["আদা-রসুন বাটা", 12, "g"],
+      ["কাঁচা মরিচ", 3, "pc"] ]],
+    ["তেল-মসলা", [
+      ["সরিষার তেল", 40, "ml"], ["তেহারি মসলা", 7, "g"], ["লবণ", 6, "g"],
+      ["লেবু", 0.25, "ta"] ]]
+  ]}
+};
+const EXTRAS = {
+  borhani: ["বোরহানি", [["টক দই (বোরহানির জন্য)", 60, "g"], ["পুদিনা ও ধনিয়াপাতা", 5, "g"], ["চিনি (বোরহানির জন্য)", 4, "g"]]],
+  salad:   ["সালাদ", [["শসা, টমেটো ও গাজর", 60, "g"], ["লেবু (সালাদের জন্য)", 0.25, "ta"]]],
+  misti:   ["মিষ্টি", [["মিষ্টি (রসগোল্লা / জিলাপি)", 2, "pc"]]]
+};
+
+const $ = id => document.getElementById(id);
+const guestsEl = $("guests");
+
+function fmtQty(per, guests, buffer, unit){
+  let total = per * guests * (buffer ? 1.1 : 1);
+  if(unit === "g"){
+    if(total >= 1000){ let kg = Math.round(total / 100) / 10; return BN(kg) + " কেজি"; }
+    return BN(Math.round(total / 10) * 10) + " গ্রাম";
+  }
+  if(unit === "ml"){
+    if(total >= 1000){ let l = Math.round(total / 100) / 10; return BN(l) + " লিটার"; }
+    return BN(Math.round(total / 10) * 10) + " মিলি";
+  }
+  return BN(Math.ceil(total - 1e-9)) + (unit === "ta" ? " টা" : " পিস");
+}
+
+let lastText = "";
+function calc(){
+  let guests = parseInt(guestsEl.value, 10);
+  if(isNaN(guests) || guests < 1) guests = 0;
+  guests = Math.min(guests, 10000);
+  const menuKey = document.querySelector('input[name="menu"]:checked').value;
+  const menu = MENUS[menuKey];
+  const buffer = $("optBuffer").checked;
+
+  const groups = menu.groups.map(g => [g[0], g[1].slice()]);
+  if($("optBorhani").checked) groups.push(EXTRAS.borhani);
+  if($("optSalad").checked) groups.push(EXTRAS.salad);
+  if($("optMisti").checked) groups.push(EXTRAS.misti);
+
+  $("meta").innerHTML = "মেনু: <b>" + menu.name + "</b> · অতিথি: <b>" + BN(guests) + " জন</b>" +
+    (buffer ? " · <b>১০% বাড়তিসহ</b>" : "");
+
+  let html = "", lines = ["দাওয়াতের হিসাব — " + menu.name, "অতিথি: " + BN(guests) + " জন" + (buffer ? " (১০% বাড়তিসহ)" : ""), ""];
+  for(const [gname, items] of groups){
+    html += '<tr><td class="cat" colspan="2">' + gname + "</td></tr>";
+    lines.push("— " + gname + " —");
+    for(const [name, per, unit] of items){
+      const q = guests ? fmtQty(per, guests, buffer, unit) : "—";
+      html += "<tr><td>" + name + '</td><td class="q">' + q + "</td></tr>";
+      lines.push(name + ": " + q);
+    }
+    lines.push("");
+  }
+  $("list").innerHTML = html;
+  lastText = lines.join("\n").trim();
+}
+
+document.querySelectorAll('input[name="menu"]').forEach(r => {
+  r.addEventListener("change", () => {
+    document.querySelectorAll(".menu").forEach(m => m.classList.toggle("sel", m.contains(r) && r.checked));
+    calc();
+  });
+});
+document.querySelectorAll(".menu").forEach(m => m.addEventListener("click", () => {
+  setTimeout(() => document.querySelectorAll(".menu").forEach(x =>
+    x.classList.toggle("sel", x.querySelector("input").checked)), 0);
+}));
+$("chips").addEventListener("click", e => {
+  const b = e.target.closest(".chip"); if(!b) return;
+  guestsEl.value = b.dataset.n;
+  document.querySelectorAll(".chip").forEach(c => c.classList.toggle("on", c === b));
+  calc();
+});
+guestsEl.addEventListener("input", () => {
+  document.querySelectorAll(".chip").forEach(c => c.classList.toggle("on", c.dataset.n === guestsEl.value));
+  calc();
+});
+["optBorhani","optSalad","optMisti","optBuffer"].forEach(id => $(id).addEventListener("change", calc));
+$("goBtn").addEventListener("click", () => {
+  calc();
+  $("resultCard").scrollIntoView({behavior:"smooth", block:"start"});
+});
+$("topBtn").addEventListener("click", () => window.scrollTo({top:0, behavior:"smooth"}));
+$("copyBtn").addEventListener("click", async () => {
+  const btn = $("copyBtn");
+  try { await navigator.clipboard.writeText(lastText); btn.textContent = "কপি হয়েছে ✓"; }
+  catch(e){
+    const ta = document.createElement("textarea");
+    ta.value = lastText; document.body.appendChild(ta); ta.select();
+    document.execCommand("copy"); ta.remove(); btn.textContent = "কপি হয়েছে ✓";
+  }
+  setTimeout(() => btn.textContent = "তালিকা কপি করুন", 1800);
+});
+calc();
+</script>
+</body>
+</html>
